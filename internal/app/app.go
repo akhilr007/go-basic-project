@@ -13,14 +13,14 @@ import (
 )
 
 type Application struct {
-	Logger *log.Logger
+	Logger         *log.Logger
 	WorkoutHandler *api.WorkoutHandler
-	DB *sql.DB
+	DB             *sql.DB
 }
 
 func NewApplication() (*Application, error) {
 
-	pgDB, err := store.Open();
+	pgDB, err := store.Open()
 	if err != nil {
 		return nil, err
 	}
@@ -29,20 +29,22 @@ func NewApplication() (*Application, error) {
 	if err != nil {
 		panic(err)
 	}
-	
+
 	logger := log.New(os.Stdout, "", log.Ldate|log.Ltime)
 
-	workoutHandler := api.NewWorkoutHandler()
+	workoutStore := store.NewPostgresWorkoutStore(pgDB)
+
+	workoutHandler := api.NewWorkoutHandler(workoutStore)
 
 	app := &Application{
-		Logger: logger,
+		Logger:         logger,
 		WorkoutHandler: workoutHandler,
-		DB: pgDB,
+		DB:             pgDB,
 	}
 
 	return app, nil
 }
 
-func(a *Application) HealthCheck(w http.ResponseWriter, r *http.Request) {
+func (a *Application) HealthCheck(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "Status is available\n")
 }
