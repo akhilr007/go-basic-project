@@ -80,7 +80,7 @@ func (pg *PostGresWorkoutStore) GetWorkoutById(id int) (*Workout, error) {
 	workout := &Workout{}
 
 	query := `
-	SELECT id, title, description, duration_minutes, calories_burned,
+	SELECT id, title, description, duration_minutes, calories_burned
 	FROM workouts
 	WHERE id = $1
 	`
